@@ -3,46 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel de Performance OPS</title>
+  <title>Painel Analítico de OPS / LOG</title>
   <style>
     :root{
-      --bg:#0b1020;
-      --bg-soft:#121935;
-      --card:rgba(255,255,255,.08);
-      --card-2:rgba(255,255,255,.05);
-      --line:rgba(255,255,255,.12);
-      --text:#eef2ff;
-      --muted:#b7c0e0;
+      --bg:#0a1020;
+      --bg2:#111933;
+      --card:rgba(255,255,255,.07);
+      --card2:rgba(255,255,255,.045);
+      --line:rgba(255,255,255,.10);
+      --text:#f3f6ff;
+      --muted:#aeb8d9;
       --brand:#ff6a3d;
-      --brand-2:#ff8f6b;
+      --brand2:#ff8d6d;
       --ok:#49d17d;
-      --warn:#ffb84d;
-      --danger:#ff6b6b;
-      --shadow:0 18px 50px rgba(0,0,0,.35);
+      --warn:#ffbc4c;
+      --bad:#ff6b6b;
+      --blue:#74a7ff;
+      --shadow:0 20px 55px rgba(0,0,0,.34);
       --radius:22px;
     }
-
     *{box-sizing:border-box}
     body{
       margin:0;
       font-family:Inter,Segoe UI,Arial,sans-serif;
       color:var(--text);
       background:
-        radial-gradient(circle at top left, rgba(255,106,61,.22), transparent 28%),
-        radial-gradient(circle at top right, rgba(73,209,125,.12), transparent 22%),
-        linear-gradient(180deg, #0a0f1f 0%, #11182d 100%);
+        radial-gradient(circle at top left, rgba(255,106,61,.18), transparent 28%),
+        radial-gradient(circle at top right, rgba(116,167,255,.12), transparent 30%),
+        linear-gradient(180deg,#09101f 0%,#11182f 100%);
       min-height:100vh;
     }
-
-    .wrap{max-width:1400px;margin:0 auto;padding:28px 20px 40px}
-
-    .hero{
-      display:grid;
-      grid-template-columns:1.3fr .9fr;
-      gap:18px;
-      margin-bottom:18px;
-    }
-
+    .wrap{max-width:1600px;margin:0 auto;padding:24px 18px 44px}
     .panel{
       background:var(--card);
       border:1px solid var(--line);
@@ -50,474 +41,441 @@
       box-shadow:var(--shadow);
       backdrop-filter:blur(14px);
     }
-
-    .hero-main{padding:28px}
-    .hero h1{margin:0 0 10px;font-size:32px;line-height:1.08}
-    .hero p{margin:0;color:var(--muted);font-size:15px;line-height:1.55}
-
+    .hero{display:grid;grid-template-columns:1.35fr .95fr;gap:18px;margin-bottom:18px}
+    .hero-main{padding:26px}
+    h1{margin:0 0 10px;font-size:34px;line-height:1.05}
+    .subtitle{margin:0;color:var(--muted);font-size:15px;line-height:1.6;max-width:900px}
     .badge-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
-    .badge{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);font-size:13px;color:var(--text)
-    }
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:10px 13px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);font-size:13px}
     .dot{width:10px;height:10px;border-radius:50%;background:var(--brand)}
-    .dot.ok{background:var(--ok)}
-    .dot.warn{background:var(--warn)}
-
-    .upload-box{padding:22px;display:flex;flex-direction:column;justify-content:center}
-    .upload-box h2{margin:0 0 8px;font-size:20px}
-    .upload-box p{margin:0 0 16px;color:var(--muted);font-size:14px;line-height:1.5}
-    .upload-area{
-      border:1.5px dashed rgba(255,255,255,.22);
-      background:rgba(255,255,255,.04);
-      border-radius:18px;padding:18px;text-align:center;
-    }
-    input[type=file]{width:100%;padding:14px;color:var(--muted);background:transparent}
-
-    .toolbar{
-      display:flex;gap:12px;align-items:center;justify-content:space-between;
-      margin:16px 0 18px;flex-wrap:wrap;
-    }
-    .search{
-      flex:1;min-width:260px;display:flex;align-items:center;gap:10px;
-      background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;
-    }
-    .search input{
-      flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:14px;
-    }
+    .dot.ok{background:var(--ok)} .dot.warn{background:var(--warn)} .dot.blue{background:var(--blue)}
+    .upload{padding:22px;display:flex;flex-direction:column;justify-content:center}
+    .upload h2{margin:0 0 8px;font-size:20px}
+    .upload p{margin:0 0 14px;color:var(--muted);font-size:14px;line-height:1.5}
+    .upload-box{border:1.5px dashed rgba(255,255,255,.2);border-radius:18px;padding:16px;background:rgba(255,255,255,.04)}
+    input[type=file]{width:100%;padding:12px;background:transparent;color:var(--muted)}
+    .toolbar{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;margin-bottom:18px}
+    .search,.miniSelect{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card);border:1px solid var(--line);border-radius:16px}
+    .search input,.miniSelect select{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:14px}
     .hint{color:var(--muted);font-size:13px}
-
-    .cards{
-      display:grid;
-      grid-template-columns:repeat(5,minmax(0,1fr));
-      gap:14px;margin-bottom:18px;
-    }
+    .cards{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;margin-bottom:18px}
     .card{padding:18px}
-    .card .label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-    .card .value{font-size:32px;font-weight:800;line-height:1.05;margin-bottom:6px}
-    .card .sub{font-size:13px;color:var(--muted)}
-
-    .grid{
-      display:grid;
-      grid-template-columns:1fr 1.3fr;
-      gap:18px;
-      align-items:start;
-    }
-
+    .label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+    .value{font-size:30px;font-weight:800;line-height:1.05;margin-bottom:6px}
+    .sub{font-size:13px;color:var(--muted);line-height:1.45}
+    .layout{display:grid;grid-template-columns:1.25fr .95fr;gap:18px;margin-bottom:18px}
     .section{padding:18px}
-    .section h3{margin:0 0 14px;font-size:19px}
-    .small-note{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.45}
-
+    .section h3{margin:0 0 12px;font-size:19px}
+    .section p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+    .charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-bottom:18px}
+    .svgWrap{margin-top:14px;padding:10px;background:var(--card2);border:1px solid rgba(255,255,255,.06);border-radius:18px}
+    .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;color:var(--muted);font-size:12px}
+    .legend span{display:inline-flex;align-items:center;gap:7px}
+    .sq{width:12px;height:12px;border-radius:4px;background:var(--brand)}
+    .sq.blue{background:var(--blue)} .sq.ok{background:var(--ok)} .sq.warn{background:var(--warn)}
+    .sq.bad{background:var(--bad)}
     table{width:100%;border-collapse:collapse}
-    th,td{padding:12px 10px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;font-size:14px}
-    th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-    tbody tr:hover{background:rgba(255,255,255,.04)}
-
-    .rank{
-      display:inline-flex;align-items:center;justify-content:center;
-      width:30px;height:30px;border-radius:10px;font-weight:800;
-      background:linear-gradient(135deg,var(--brand),var(--brand-2));
-      color:#fff;
+    th,td{padding:11px 10px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;font-size:13px;vertical-align:top}
+    th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+    tbody tr:hover{background:rgba(255,255,255,.03)}
+    .rank{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));font-weight:800}
+    .name{font-weight:700}
+    .code{font-size:12px;color:var(--muted);margin-top:4px}
+    .chip{display:inline-flex;padding:6px 9px;border-radius:999px;font-size:12px;font-weight:700;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
+    .chip.bad{background:rgba(255,107,107,.12);border-color:rgba(255,107,107,.24);color:#ffd4d4}
+    .chip.ok{background:rgba(73,209,125,.12);border-color:rgba(73,209,125,.24);color:#dcffe8}
+    .chip.warn{background:rgba(255,188,76,.12);border-color:rgba(255,188,76,.22);color:#ffe8bb}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .foot{margin-top:16px;color:var(--muted);font-size:12px;line-height:1.65}
+    @media (max-width:1200px){
+      .cards{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .hero,.layout,.charts,.grid2{grid-template-columns:1fr}
+      .toolbar{grid-template-columns:1fr}
     }
-    .ops-name{font-weight:700}
-    .ops-code{font-size:12px;color:var(--muted);margin-top:4px}
-    .chip{
-      display:inline-flex;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;
-      background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09)
-    }
-    .chip.danger{background:rgba(255,107,107,.12);border-color:rgba(255,107,107,.22);color:#ffd4d4}
-    .chip.ok{background:rgba(73,209,125,.12);border-color:rgba(73,209,125,.24);color:#d9ffe5}
-
-    .footer-note{margin-top:18px;color:var(--muted);font-size:12px;line-height:1.6}
-
-    @media (max-width:1100px){
+    @media (max-width:700px){
       .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .grid,.hero{grid-template-columns:1fr}
+      h1{font-size:28px}
+      .wrap{padding:16px 10px 28px}
     }
-    @media (max-width:640px){
-      .cards{grid-template-columns:1fr}
-      .hero h1{font-size:26px}
-      .wrap{padding:18px 12px 28px}
-      th,td{padding:10px 8px;font-size:13px}
-    }
+    @media (max-width:520px){.cards{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <section class="hero">
-      <div class="panel hero-main">
-        <h1>Painel de Performance dos OPS</h1>
-        <p>
-          Este site importa o CSV de assignment task, agrupa por <strong>Task ID</strong> e calcula o tempo médio para
-          <strong>iniciar</strong> a rota (<strong>Create Time → Driver Assigned Time</strong>) e para
-          <strong>finalizar</strong> a rota (<strong>Driver Assigned Time → Complete time</strong>).
-        </p>
-        <div class="badge-row">
-          <span class="badge"><span class="dot"></span> Ranking dos maiores tempos médios</span>
-          <span class="badge"><span class="dot warn"></span> Contagem de rotas acima de 7 min</span>
-          <span class="badge"><span class="dot ok"></span> Tabela completa por OPS</span>
-        </div>
+<div class="wrap">
+  <section class="hero">
+    <div class="panel hero-main">
+      <h1>Painel Analítico de OPS / LOG</h1>
+      <p class="subtitle">
+        Este dashboard importa o CSV de assignment task e mantém o que já existia, mas agora acrescenta análises de <strong>OPS ativos por hora</strong>, <strong>rotas por hora</strong>, <strong>pacotes por hora</strong>, <strong>tempo para iniciar</strong>, <strong>tempo para finalizar</strong>, <strong>tempo total por rota</strong>, <strong>ranking dos maiores ofensores</strong> e <strong>maior tempo individual de rota</strong>.
+      </p>
+      <div class="badge-row">
+        <span class="badge"><span class="dot"></span> Ranking por maior tempo médio</span>
+        <span class="badge"><span class="dot warn"></span> Rotas acima de 7 min</span>
+        <span class="badge"><span class="dot blue"></span> Bancadas abertas por hora = OPS ativos</span>
+        <span class="badge"><span class="dot ok"></span> Gráficos visuais e tabelas completas</span>
       </div>
-
-      <div class="panel upload-box">
-        <h2>Importar CSV</h2>
-        <p>Selecione outro arquivo com a mesma estrutura para recalcular tudo automaticamente.</p>
-        <div class="upload-area">
-          <input id="fileInput" type="file" accept=".csv" />
-          <div class="hint">Arquivo atual carregado por padrão: <strong id="currentSource">br_assignment_task_20260320 (1).csv</strong></div>
-        </div>
-      </div>
-    </section>
-
-    <div class="toolbar">
-      <div class="search panel">
-        <span>🔎</span>
-        <input id="searchInput" type="text" placeholder="Filtrar por OPS, código ou nome..." />
-      </div>
-      <div class="hint" id="resultInfo">Carregado com os dados do arquivo enviado.</div>
     </div>
-
-    <section class="cards" id="cards"></section>
-
-    <section class="grid">
-      <div class="panel section">
-        <h3>Top 10 ofensores por tempo médio de início</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>OPS</th>
-              <th>Tempo médio início</th>
-              <th>Rotas</th>
-              <th>> 7 min</th>
-            </tr>
-          </thead>
-          <tbody id="rankingBody"></tbody>
-        </table>
-        <div class="small-note">
-          O ranking considera do maior para o menor o tempo médio entre criação da rota e atribuição ao motorista.
-        </div>
+    <div class="panel upload">
+      <h2>Importar CSV</h2>
+      <p>Use sempre um arquivo com a mesma estrutura. O cálculo será refeito automaticamente e o layout permanece igual.</p>
+      <div class="upload-box">
+        <input id="fileInput" type="file" accept=".csv" />
+        <div class="hint">Fonte atual: <strong id="currentSource"></strong></div>
       </div>
-
-      <div class="panel section">
-        <h3>Resumo completo por OPS</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>OPS</th>
-              <th>Rotas</th>
-              <th>Média início</th>
-              <th>Início &gt; 7 min</th>
-              <th>Média finalização</th>
-              <th>Finalização &gt; 7 min</th>
-              <th>Finalizadas</th>
-            </tr>
-          </thead>
-          <tbody id="opsBody"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <div class="footer-note">
-      Observação importante: o campo <strong>Complete time</strong> precisa estar preenchido para calcular a finalização.
-      Se o arquivo vier com poucas rotas finalizadas, essa parte do painel vai refletir somente essas linhas.
     </div>
+  </section>
+
+  <div class="toolbar">
+    <div class="search panel"><span>🔎</span><input id="searchInput" type="text" placeholder="Filtrar por OPS, código ou nome..." /></div>
+    <div class="miniSelect panel"><span>🏆</span><select id="rankMode"><option value="avgStart">Ranking por média de início</option><option value="avgTotal">Ranking por média total da rota</option><option value="maxTotal">Ranking por maior rota individual</option></select></div>
+    <div class="hint" id="resultInfo"></div>
   </div>
 
-  <script>
-    const PRELOADED = {
-      sourceName: 'br_assignment_task_20260320 (1).csv',
-      summary: { totalRotas: 147, totalOps: 14, mediaInicioGeralMin: 15.65, rotasInicioMaior7: 139, rotasFinalizadas: 3, mediaFinalizacaoGeralMin: 239.0, rotasFinalizacaoMaior7: 3 },
-      ops: [
-        { creator: "[ops100283]HENRIQUE  BERTHOLDO DE OLIVEIRA", opsCode: "[ops100283]", opsName: "HENRIQUE  BERTHOLDO DE OLIVEIRA", rotas: 5, mediaInicioMin: 21.8, rotasInicioMaior7: 5, mediaFinalizacaoMin: null, rotasFinalizacaoMaior7: 0, rotasFinalizadas: 0, mediaTotalMin: null },
-        { creator: "[ops67497]Aline Silva Salvador", opsCode: "[ops67497]", opsName: "Aline Silva Salvador", rotas: 11, mediaInicioMin: 19.55, rotasInicioMaior7: 11, mediaFinalizacaoMin: null, rotasFinalizacaoMaior7: 0, rotasFinalizadas: 0, mediaTotalMin: null },
-        { creator: "[ops96007]ANA  PAULA ARAUJO RAMOS", opsCode: "[ops96007]", opsName: "ANA  PAULA ARAUJO RAMOS", rotas: 12, mediaInicioMin: 16.67, rotasInicioMaior7: 12, mediaFinalizacaoMin: null, rotasFinalizacaoMaior7: 0, rotasFinalizadas: 0, mediaTotalMin: null },
-        { creator: "[ops35838]Daniel Fabiano da Silva", opsCode: "[ops35838]", opsName: "Daniel Fabiano da Silva", rotas: 3, mediaInicioMin: 16.33, rotasInicioMaior7: 2, mediaFinalizacaoMin: null, rotasFinalizacaoMaior7: 0, rotasFinalizadas: 0, mediaTotalMin: null },
-        { creator: "[ops87287]JAQUELINE  APARECIDA VITORIA DE MORAES", opsCode: "[ops87287]", opsName: "JAQUELINE  APARECIDA VITORIA DE MORAES", rotas: 13, mediaInicioMin: 16.23, rotasInicioMaior7: 12, mediaFinalizacaoMin: 284.0, rotasFinalizacaoMaior7: 1, rotasFinalizadas: 1, mediaTotalMin: 299.0 },
-        { creator: "[ops79861]DANDARA  KETIN FIUZA SALVADOR", opsCode: "[ops79861]", opsName: "DANDARA  KETIN FIUZA SALVADOR", rotas: 13, mediaInicioMin: 16.0, rotasInicioMaior7: 12, mediaFinalizacaoMin: null, rotasFinalizacaoMaior7: 0, rotasFinalizadas: 0, mediaTotalMin: null },
-        { creator: "[ops198512]BIANCA DE SOUZA ROENEZ", opsCode: "[ops198512]", opsName: "BIANCA DE SOUZA ROENEZ", rotas: 13, mediaInicioMin: 15.92, rotasInicioMaior7: 12, mediaFinalizacaoMin: null, rotasFinalizacaoMaior7: 0, rotasFinalizadas: 0, mediaTotalMin: null },
-        { creator: "[ops204658]GEOVANA RAMOS ROENEZ", opsCode: "[ops204658]", opsName: "GEOVANA RAMOS ROENEZ", rotas: 13, mediaInicioMin: 15.85, rotasInicioMaior7: 13, mediaFinalizacaoMin: null, rotasFinalizacaoMaior7: 0, rotasFinalizadas: 0, mediaTotalMin: null },
-        { creator: "[ops209754]Bruno da Silva Santana", opsCode: "[ops209754]", opsName: "Bruno da Silva Santana", rotas: 7, mediaInicioMin: 15.14, rotasInicioMaior7: 7, mediaFinalizacaoMin: null, rotasFinalizacaoMaior7: 0, rotasFinalizadas: 0, mediaTotalMin: null },
-        { creator: "[ops48259]VERONICA DANTAS MOREIRA", opsCode: "[ops48259]", opsName: "VERONICA DANTAS MOREIRA", rotas: 13, mediaInicioMin: 14.85, rotasInicioMaior7: 12, mediaFinalizacaoMin: null, rotasFinalizacaoMaior7: 0, rotasFinalizadas: 0, mediaTotalMin: null },
-        { creator: "[ops58166]Cintia Borges dos Santos Rocha", opsCode: "[ops58166]", opsName: "Cintia Borges dos Santos Rocha", rotas: 10, mediaInicioMin: 14.7, rotasInicioMaior7: 9, mediaFinalizacaoMin: null, rotasFinalizacaoMaior7: 0, rotasFinalizadas: 0, mediaTotalMin: null },
-        { creator: "[ops198012]PATRICK  PRUDENTE PESTANA", opsCode: "[ops198012]", opsName: "PATRICK  PRUDENTE PESTANA", rotas: 6, mediaInicioMin: 14.33, rotasInicioMaior7: 6, mediaFinalizacaoMin: 206.0, rotasFinalizacaoMaior7: 1, rotasFinalizadas: 1, mediaTotalMin: 217.0 },
-        { creator: "[ops212204]Lais de Jesus Lima Muritiba", opsCode: "[ops212204]", opsName: "Lais de Jesus Lima Muritiba", rotas: 14, mediaInicioMin: 14.0, rotasInicioMaior7: 14, mediaFinalizacaoMin: null, rotasFinalizacaoMaior7: 0, rotasFinalizadas: 0, mediaTotalMin: null },
-        { creator: "[ops96008]AIALA  MORAIS DOS SANTOS", opsCode: "[ops96008]", opsName: "AIALA  MORAIS DOS SANTOS", rotas: 14, mediaInicioMin: 12.0, rotasInicioMaior7: 12, mediaFinalizacaoMin: 227.0, rotasFinalizacaoMaior7: 1, rotasFinalizadas: 1, mediaTotalMin: 236.0 }
-      ]
+  <section class="cards" id="cards"></section>
+
+  <section class="charts">
+    <div class="panel section">
+      <h3>Operação por hora</h3>
+      <p>Visualização conjunta de bancadas abertas por hora, rotas e pacotes processados em cada faixa.</p>
+      <div class="svgWrap" id="hourlyChart"></div>
+      <div class="legend"><span><i class="sq blue"></i> OPS ativos</span><span><i class="sq"></i> Rotas</span><span><i class="sq ok"></i> Pacotes</span></div>
+    </div>
+    <div class="panel section">
+      <h3>Top 10 OPS por média</h3>
+      <p>Gráfico do ranking principal selecionado acima.</p>
+      <div class="svgWrap" id="opsChart"></div>
+      <div class="legend"><span><i class="sq bad"></i> Tempo em minutos</span></div>
+    </div>
+  </section>
+
+  <section class="layout">
+    <div class="panel section">
+      <h3 id="rankingTitle">Top 10 ofensores</h3>
+      <table>
+        <thead>
+          <tr><th>#</th><th>OPS</th><th>Métrica</th><th>Rotas</th><th>Pacotes</th><th>&gt; 7 min</th><th>Finalizadas</th></tr>
+        </thead>
+        <tbody id="rankingBody"></tbody>
+      </table>
+    </div>
+    <div class="panel section">
+      <h3>Maiores tempos individuais de rota</h3>
+      <table>
+        <thead>
+          <tr><th>OPS</th><th>Task</th><th>Motorista</th><th>Pacotes</th><th>Início</th><th>Finalização</th><th>Total</th></tr>
+        </thead>
+        <tbody id="longestBody"></tbody>
+      </table>
+      <div class="foot">Quando o campo <strong>Complete time</strong> vier vazio no CSV, o painel não consegue medir o tempo total da rota. Neste arquivo atual, apenas algumas rotas estavam finalizadas.</div>
+    </div>
+  </section>
+
+  <section class="grid2">
+    <div class="panel section">
+      <h3>Bancadas abertas por hora</h3>
+      <table>
+        <thead><tr><th>Hora</th><th>OPS ativos</th><th>Rotas</th><th>Pacotes</th><th>Média início</th></tr></thead>
+        <tbody id="hourlyBody"></tbody>
+      </table>
+    </div>
+    <div class="panel section">
+      <h3>Resumo completo por OPS</h3>
+      <table>
+        <thead>
+          <tr><th>OPS</th><th>Rotas</th><th>Pacotes</th><th>Média início</th><th>Média fim</th><th>Média total</th><th>Maior rota</th></tr>
+        </thead>
+        <tbody id="opsBody"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<script>
+const PRELOADED = {"sourceName": "br_assignment_task_20260320 (1).csv", "summary": {"totalRotas": 147, "totalPacotes": 14715, "totalOps": 14, "rotasComInicio": 147, "rotasFinalizadas": 3, "mediaInicioGeralMin": 15.65, "mediaFinalizacaoGeralMin": 239.0, "mediaTotalGeralMin": 250.67, "rotasInicioMaior7": 139, "rotasTotalMaior7": 3, "maiorInicioMin": 39.0, "maiorTotalMin": 299.0, "horaPicoRotas": "06:00", "horaPicoPacotes": "06:00", "horaPicoOps": "06:00"}, "ops": [{"creator": "[ops100283]HENRIQUE  BERTHOLDO DE OLIVEIRA", "opsCode": "[ops100283]", "opsName": "HENRIQUE  BERTHOLDO DE OLIVEIRA", "rotas": 5, "pacotes": 422, "mediaInicioMin": 21.8, "mediaFinalizacaoMin": null, "mediaTotalMin": null, "maxInicioMin": 31.0, "maxTotalMin": null, "rotasInicioMaior7": 5, "rotasTotalMaior7": 0, "rotasFinalizadas": 0}, {"creator": "[ops67497]Aline Silva Salvador", "opsCode": "[ops67497]", "opsName": "Aline Silva Salvador", "rotas": 11, "pacotes": 1066, "mediaInicioMin": 19.55, "mediaFinalizacaoMin": null, "mediaTotalMin": null, "maxInicioMin": 36.0, "maxTotalMin": null, "rotasInicioMaior7": 11, "rotasTotalMaior7": 0, "rotasFinalizadas": 0}, {"creator": "[ops96007]ANA  PAULA ARAUJO RAMOS", "opsCode": "[ops96007]", "opsName": "ANA  PAULA ARAUJO RAMOS", "rotas": 12, "pacotes": 1296, "mediaInicioMin": 16.67, "mediaFinalizacaoMin": null, "mediaTotalMin": null, "maxInicioMin": 28.0, "maxTotalMin": null, "rotasInicioMaior7": 12, "rotasTotalMaior7": 0, "rotasFinalizadas": 0}, {"creator": "[ops35838]Daniel Fabiano da Silva", "opsCode": "[ops35838]", "opsName": "Daniel Fabiano da Silva", "rotas": 3, "pacotes": 309, "mediaInicioMin": 16.33, "mediaFinalizacaoMin": null, "mediaTotalMin": null, "maxInicioMin": 26.0, "maxTotalMin": null, "rotasInicioMaior7": 2, "rotasTotalMaior7": 0, "rotasFinalizadas": 0}, {"creator": "[ops87287]JAQUELINE  APARECIDA VITORIA DE MORAES", "opsCode": "[ops87287]", "opsName": "JAQUELINE  APARECIDA VITORIA DE MORAES", "rotas": 13, "pacotes": 1140, "mediaInicioMin": 16.23, "mediaFinalizacaoMin": 284.0, "mediaTotalMin": 299.0, "maxInicioMin": 37.0, "maxTotalMin": 299.0, "rotasInicioMaior7": 12, "rotasTotalMaior7": 1, "rotasFinalizadas": 1}, {"creator": "[ops79861]DANDARA  KETIN FIUZA SALVADOR", "opsCode": "[ops79861]", "opsName": "DANDARA  KETIN FIUZA SALVADOR", "rotas": 13, "pacotes": 1314, "mediaInicioMin": 16.0, "mediaFinalizacaoMin": null, "mediaTotalMin": null, "maxInicioMin": 26.0, "maxTotalMin": null, "rotasInicioMaior7": 12, "rotasTotalMaior7": 0, "rotasFinalizadas": 0}, {"creator": "[ops198512]BIANCA DE SOUZA ROENEZ", "opsCode": "[ops198512]", "opsName": "BIANCA DE SOUZA ROENEZ", "rotas": 13, "pacotes": 1328, "mediaInicioMin": 15.92, "mediaFinalizacaoMin": null, "mediaTotalMin": null, "maxInicioMin": 35.0, "maxTotalMin": null, "rotasInicioMaior7": 12, "rotasTotalMaior7": 0, "rotasFinalizadas": 0}, {"creator": "[ops204658]GEOVANA RAMOS ROENEZ", "opsCode": "[ops204658]", "opsName": "GEOVANA RAMOS ROENEZ", "rotas": 13, "pacotes": 1293, "mediaInicioMin": 15.85, "mediaFinalizacaoMin": null, "mediaTotalMin": null, "maxInicioMin": 30.0, "maxTotalMin": null, "rotasInicioMaior7": 13, "rotasTotalMaior7": 0, "rotasFinalizadas": 0}, {"creator": "[ops209754]Bruno da Silva Santana", "opsCode": "[ops209754]", "opsName": "Bruno da Silva Santana", "rotas": 7, "pacotes": 700, "mediaInicioMin": 15.14, "mediaFinalizacaoMin": null, "mediaTotalMin": null, "maxInicioMin": 21.0, "maxTotalMin": null, "rotasInicioMaior7": 7, "rotasTotalMaior7": 0, "rotasFinalizadas": 0}, {"creator": "[ops48259]VERONICA DANTAS MOREIRA", "opsCode": "[ops48259]", "opsName": "VERONICA DANTAS MOREIRA", "rotas": 13, "pacotes": 1393, "mediaInicioMin": 14.85, "mediaFinalizacaoMin": null, "mediaTotalMin": null, "maxInicioMin": 30.0, "maxTotalMin": null, "rotasInicioMaior7": 12, "rotasTotalMaior7": 0, "rotasFinalizadas": 0}, {"creator": "[ops58166]Cintia Borges dos Santos Rocha", "opsCode": "[ops58166]", "opsName": "Cintia Borges dos Santos Rocha", "rotas": 10, "pacotes": 947, "mediaInicioMin": 14.7, "mediaFinalizacaoMin": null, "mediaTotalMin": null, "maxInicioMin": 39.0, "maxTotalMin": null, "rotasInicioMaior7": 9, "rotasTotalMaior7": 0, "rotasFinalizadas": 0}, {"creator": "[ops198012]PATRICK  PRUDENTE PESTANA", "opsCode": "[ops198012]", "opsName": "PATRICK  PRUDENTE PESTANA", "rotas": 6, "pacotes": 691, "mediaInicioMin": 14.33, "mediaFinalizacaoMin": 206.0, "mediaTotalMin": 217.0, "maxInicioMin": 21.0, "maxTotalMin": 217.0, "rotasInicioMaior7": 6, "rotasTotalMaior7": 1, "rotasFinalizadas": 1}, {"creator": "[ops212204]Lais de Jesus Lima Muritiba", "opsCode": "[ops212204]", "opsName": "Lais de Jesus Lima Muritiba", "rotas": 14, "pacotes": 1379, "mediaInicioMin": 14.0, "mediaFinalizacaoMin": null, "mediaTotalMin": null, "maxInicioMin": 19.0, "maxTotalMin": null, "rotasInicioMaior7": 14, "rotasTotalMaior7": 0, "rotasFinalizadas": 0}, {"creator": "[ops96008]AIALA  MORAIS DOS SANTOS", "opsCode": "[ops96008]", "opsName": "AIALA  MORAIS DOS SANTOS", "rotas": 14, "pacotes": 1437, "mediaInicioMin": 12.0, "mediaFinalizacaoMin": 227.0, "mediaTotalMin": 236.0, "maxInicioMin": 25.0, "maxTotalMin": 236.0, "rotasInicioMaior7": 12, "rotasTotalMaior7": 1, "rotasFinalizadas": 1}], "hourly": [{"hour": "05:00", "rotas": 21, "pacotes": 2575, "opsAtivos": 11, "mediaInicioMin": 14.38}, {"hour": "06:00", "rotas": 43, "pacotes": 4234, "opsAtivos": 12, "mediaInicioMin": 15.3}, {"hour": "07:00", "rotas": 37, "pacotes": 3613, "opsAtivos": 12, "mediaInicioMin": 16.14}, {"hour": "08:00", "rotas": 40, "pacotes": 3816, "opsAtivos": 12, "mediaInicioMin": 16.75}, {"hour": "09:00", "rotas": 6, "pacotes": 477, "opsAtivos": 6, "mediaInicioMin": 12.33}], "longestRoutes": [{"taskId": "AT202603202S8T1", "creator": "[ops87287]JAQUELINE  APARECIDA VITORIA DE MORAES", "driverName": "MATEUS NOBRE FERREIRA", "driverId": "2407766", "packages": 91, "startMin": 15.0, "finishMin": 284.0, "totalMin": 299.0, "createTime": "20-03-2026 05:35", "assignedTime": "20-03-2026 05:50", "completeTime": "20-03-2026 10:34"}, {"taskId": "AT202603202S9IS", "creator": "[ops96008]AIALA  MORAIS DOS SANTOS", "driverName": "Wanderson Da Conceição Da Silva", "driverId": "62691", "packages": 87, "startMin": 9.0, "finishMin": 227.0, "totalMin": 236.0, "createTime": "20-03-2026 06:15", "assignedTime": "20-03-2026 06:24", "completeTime": "20-03-2026 10:11"}, {"taskId": "AT202603202S9H8", "creator": "[ops198012]PATRICK  PRUDENTE PESTANA", "driverName": "KAUAN PEREIRA BATISTA", "driverId": "1691461", "packages": 117, "startMin": 11.0, "finishMin": 206.0, "totalMin": 217.0, "createTime": "20-03-2026 05:43", "assignedTime": "20-03-2026 05:54", "completeTime": "20-03-2026 09:20"}]};
+
+const cards = document.getElementById('cards');
+const rankingBody = document.getElementById('rankingBody');
+const opsBody = document.getElementById('opsBody');
+const longestBody = document.getElementById('longestBody');
+const hourlyBody = document.getElementById('hourlyBody');
+const fileInput = document.getElementById('fileInput');
+const searchInput = document.getElementById('searchInput');
+const currentSource = document.getElementById('currentSource');
+const resultInfo = document.getElementById('resultInfo');
+const rankMode = document.getElementById('rankMode');
+const rankingTitle = document.getElementById('rankingTitle');
+const hourlyChart = document.getElementById('hourlyChart');
+const opsChart = document.getElementById('opsChart');
+let currentData = structuredClone(PRELOADED);
+
+function fmtNum(v){ return new Intl.NumberFormat('pt-BR').format(Number(v || 0)); }
+function fmtMin(v){ return (v === null || v === undefined || Number.isNaN(v)) ? '—' : `${Number(v).toFixed(2)} min`; }
+function esc(v){ return String(v ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;'); }
+function cardTemplate(label,value,sub){ return `<article class="panel card"><div class="label">${label}</div><div class="value">${value}</div><div class="sub">${sub}</div></article>`; }
+
+function parseDateBR(value){
+  if(!value) return null;
+  const m = String(value).trim().match(/^(\d{2})-(\d{2})-(\d{4})\s+(\d{2}):(\d{2})$/);
+  if(!m) return null;
+  const [,dd,mm,yyyy,hh,mi] = m;
+  const dt = new Date(Number(yyyy), Number(mm)-1, Number(dd), Number(hh), Number(mi));
+  return Number.isNaN(dt.getTime()) ? null : dt;
+}
+function minutesBetween(a,b){ return (!a || !b) ? null : (b.getTime()-a.getTime())/60000; }
+function splitOps(text){
+  const raw = String(text || '').trim();
+  const m = raw.match(/^(\[ops\d+\])\s*(.*)$/i);
+  return { opsCode:m?m[1]:'', opsName:m?m[2]:raw };
+}
+function parseCSV(text){
+  const rows=[]; let row=[], cell='', inQuotes=false;
+  for(let i=0;i<text.length;i++){
+    const char=text[i], next=text[i+1];
+    if(char==='"'){
+      if(inQuotes && next==='"'){ cell+='"'; i++; }
+      else inQuotes=!inQuotes;
+    } else if(char===',' && !inQuotes){ row.push(cell); cell=''; }
+    else if((char==='\n' || char==='\r') && !inQuotes){ if(char==='\r' && next==='\n') i++; row.push(cell); if(row.some(v=>String(v).length)) rows.push(row); row=[]; cell=''; }
+    else cell+=char;
+  }
+  if(cell.length || row.length){ row.push(cell); if(row.some(v=>String(v).length)) rows.push(row); }
+  return rows;
+}
+function rowsToObjects(rows){
+  if(!rows.length) return [];
+  const headers = rows[0].map(h => String(h).replace(/^\uFEFF/,'').trim());
+  return rows.slice(1).map(cols => {
+    const o={}; headers.forEach((h,i)=>o[h]=(cols[i] ?? '').trim()); return o;
+  });
+}
+function buildDataFromObjects(objects, sourceName){
+  const routeMap = new Map();
+  for(const item of objects){
+    const taskId=item['Task ID']; if(!taskId) continue;
+    if(!routeMap.has(taskId)){
+      routeMap.set(taskId, {
+        taskId,
+        creator:item['Creator'] || item['Operator'] || 'Sem identificação',
+        createTime:item['Create Time'] || '',
+        assignedTime:item['Driver Assigned Time'] || '',
+        completeTime:item['Complete time'] || '',
+        packages:Number(item['Number of assigned orders/TO'] || item['Number of order/TO'] || 0) || 0,
+        driverName:item['Driver name'] || '',
+        driverId:item['Driver ID'] || ''
+      });
+    }
+  }
+  const routes = [...routeMap.values()].map(r => {
+    const create = parseDateBR(r.createTime), assigned=parseDateBR(r.assignedTime), complete=parseDateBR(r.completeTime);
+    return {
+      ...r,
+      create,
+      assigned,
+      complete,
+      startMin: minutesBetween(create, assigned),
+      finishMin: minutesBetween(assigned, complete),
+      totalMin: minutesBetween(create, complete),
+      hour: create ? `${String(create.getHours()).padStart(2,'0')}:00` : 'Sem hora'
     };
+  });
 
-    const cards = document.getElementById('cards');
-    const rankingBody = document.getElementById('rankingBody');
-    const opsBody = document.getElementById('opsBody');
-    const fileInput = document.getElementById('fileInput');
-    const searchInput = document.getElementById('searchInput');
-    const currentSource = document.getElementById('currentSource');
-    const resultInfo = document.getElementById('resultInfo');
-
-    let currentData = structuredClone(PRELOADED);
-
-    function fmtMin(v){
-      if (v === null || v === undefined || Number.isNaN(v)) return '—';
-      return `${Number(v).toFixed(2)} min`;
+  const avg = arr => arr.length ? Number((arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(2)) : null;
+  const max = arr => arr.length ? Number(Math.max(...arr).toFixed(2)) : null;
+  const opsMap = new Map();
+  for(const r of routes){
+    const key=r.creator;
+    if(!opsMap.has(key)){
+      const info=splitOps(key);
+      opsMap.set(key,{creator:key,opsCode:info.opsCode,opsName:info.opsName,rotas:0,pacotes:0,start:[],finish:[],total:[],rotasInicioMaior7:0,rotasTotalMaior7:0,rotasFinalizadas:0});
     }
+    const acc=opsMap.get(key);
+    acc.rotas += 1; acc.pacotes += Number(r.packages || 0);
+    if(r.startMin !== null && !Number.isNaN(r.startMin)){ acc.start.push(r.startMin); if(r.startMin > 7) acc.rotasInicioMaior7 += 1; }
+    if(r.totalMin !== null && !Number.isNaN(r.totalMin)){ acc.total.push(r.totalMin); acc.rotasFinalizadas += 1; if(r.totalMin > 7) acc.rotasTotalMaior7 += 1; }
+    if(r.finishMin !== null && !Number.isNaN(r.finishMin)) acc.finish.push(r.finishMin);
+  }
+  const ops = [...opsMap.values()].map(item => ({
+    creator:item.creator, opsCode:item.opsCode, opsName:item.opsName, rotas:item.rotas, pacotes:item.pacotes,
+    mediaInicioMin:avg(item.start), mediaFinalizacaoMin:avg(item.finish), mediaTotalMin:avg(item.total),
+    maxInicioMin:max(item.start), maxTotalMin:max(item.total), rotasInicioMaior7:item.rotasInicioMaior7,
+    rotasTotalMaior7:item.rotasTotalMaior7, rotasFinalizadas:item.rotasFinalizadas
+  }));
 
-    function cardTemplate(label, value, sub){
-      return `
-        <article class="panel card">
-          <div class="label">${label}</div>
-          <div class="value">${value}</div>
-          <div class="sub">${sub}</div>
-        </article>
-      `;
-    }
+  const hourMap = new Map();
+  for(const r of routes){
+    if(!hourMap.has(r.hour)) hourMap.set(r.hour, {hour:r.hour, rotas:0, pacotes:0, opsSet:new Set(), start:[]});
+    const h = hourMap.get(r.hour);
+    h.rotas += 1; h.pacotes += Number(r.packages || 0); h.opsSet.add(r.creator);
+    if(r.startMin !== null && !Number.isNaN(r.startMin)) h.start.push(r.startMin);
+  }
+  const hourly = [...hourMap.values()].filter(x => x.hour !== 'Sem hora').sort((a,b) => a.hour.localeCompare(b.hour)).map(h => ({
+    hour:h.hour, rotas:h.rotas, pacotes:h.pacotes, opsAtivos:h.opsSet.size, mediaInicioMin:avg(h.start)
+  }));
 
-    function render(data, filter=''){
-      const q = filter.trim().toLowerCase();
-      const opsFiltered = data.ops.filter(item => {
-        const base = `${item.creator} ${item.opsCode} ${item.opsName}`.toLowerCase();
-        return base.includes(q);
-      });
-      const ranking = [...opsFiltered]
-        .sort((a,b) => (b.mediaInicioMin ?? -1) - (a.mediaInicioMin ?? -1))
-        .slice(0,10);
+  const finishedRoutes = routes.filter(r => r.totalMin !== null && !Number.isNaN(r.totalMin)).sort((a,b)=>b.totalMin-a.totalMin).slice(0,10).map(r => ({
+    taskId:r.taskId, creator:r.creator, driverName:r.driverName, driverId:r.driverId, packages:r.packages,
+    startMin:Number(r.startMin?.toFixed?.(2) ?? r.startMin), finishMin:Number(r.finishMin?.toFixed?.(2) ?? r.finishMin),
+    totalMin:Number(r.totalMin?.toFixed?.(2) ?? r.totalMin), createTime:r.createTime, assignedTime:r.assignedTime, completeTime:r.completeTime
+  }));
 
-      cards.innerHTML = [
-        cardTemplate('Total de rotas', data.summary.totalRotas, 'Agrupadas por Task ID'),
-        cardTemplate('OPS mapeados', data.summary.totalOps, 'Criadores/operadores únicos'),
-        cardTemplate('Média geral de início', fmtMin(data.summary.mediaInicioGeralMin), 'Create Time → Driver Assigned Time'),
-        cardTemplate('Rotas > 7 min no início', data.summary.rotasInicioMaior7, 'Tempo acima do limite informado'),
-        cardTemplate('Média geral de finalização', fmtMin(data.summary.mediaFinalizacaoGeralMin), `${data.summary.rotasFinalizadas} rotas com Complete time`)
-      ].join('');
+  const summary = {
+    totalRotas: routes.length,
+    totalPacotes: routes.reduce((s,r)=>s+Number(r.packages || 0),0),
+    totalOps: ops.length,
+    rotasComInicio: routes.filter(r => r.startMin !== null && !Number.isNaN(r.startMin)).length,
+    rotasFinalizadas: routes.filter(r => r.totalMin !== null && !Number.isNaN(r.totalMin)).length,
+    mediaInicioGeralMin: avg(routes.map(r=>r.startMin).filter(v=>v!==null && !Number.isNaN(v))),
+    mediaFinalizacaoGeralMin: avg(routes.map(r=>r.finishMin).filter(v=>v!==null && !Number.isNaN(v))),
+    mediaTotalGeralMin: avg(routes.map(r=>r.totalMin).filter(v=>v!==null && !Number.isNaN(v))),
+    rotasInicioMaior7: routes.filter(r => r.startMin > 7).length,
+    rotasTotalMaior7: routes.filter(r => r.totalMin > 7).length,
+    maiorInicioMin: max(routes.map(r=>r.startMin).filter(v=>v!==null && !Number.isNaN(v))),
+    maiorTotalMin: max(routes.map(r=>r.totalMin).filter(v=>v!==null && !Number.isNaN(v)))
+  };
+  if(hourly.length){
+    summary.horaPicoRotas = [...hourly].sort((a,b)=>b.rotas-a.rotas)[0].hour;
+    summary.horaPicoPacotes = [...hourly].sort((a,b)=>b.pacotes-a.pacotes)[0].hour;
+    summary.horaPicoOps = [...hourly].sort((a,b)=>b.opsAtivos-a.opsAtivos)[0].hour;
+  } else {
+    summary.horaPicoRotas = summary.horaPicoPacotes = summary.horaPicoOps = '—';
+  }
+  return { sourceName, summary, ops, hourly, longestRoutes: finishedRoutes };
+}
 
-      rankingBody.innerHTML = ranking.map((item, idx) => `
-        <tr>
-          <td><span class="rank">${idx + 1}</span></td>
-          <td>
-            <div class="ops-name">${escapeHtml(item.opsName || item.creator)}</div>
-            <div class="ops-code">${escapeHtml(item.opsCode || '')}</div>
-          </td>
-          <td><span class="chip danger">${fmtMin(item.mediaInicioMin)}</span></td>
-          <td>${item.rotas}</td>
-          <td>${item.rotasInicioMaior7}</td>
-        </tr>
-      `).join('') || `<tr><td colspan="5" class="hint">Nenhum resultado encontrado.</td></tr>`;
+function getRanking(data, mode, filter){
+  const q = filter.trim().toLowerCase();
+  const filtered = data.ops.filter(item => `${item.creator} ${item.opsCode} ${item.opsName}`.toLowerCase().includes(q));
+  let label = 'tempo médio de início';
+  let metricKey = 'mediaInicioMin';
+  if(mode === 'avgTotal'){ label='tempo médio total da rota'; metricKey='mediaTotalMin'; }
+  if(mode === 'maxTotal'){ label='maior rota individual'; metricKey='maxTotalMin'; }
+  const ranking = [...filtered].filter(x => x[metricKey] !== null && x[metricKey] !== undefined).sort((a,b)=>(b[metricKey]||-1)-(a[metricKey]||-1)).slice(0,10);
+  return { filtered, ranking, label, metricKey };
+}
 
-      opsBody.innerHTML = opsFiltered.map(item => `
-        <tr>
-          <td>
-            <div class="ops-name">${escapeHtml(item.opsName || item.creator)}</div>
-            <div class="ops-code">${escapeHtml(item.opsCode || '')}</div>
-          </td>
-          <td>${item.rotas}</td>
-          <td>${fmtMin(item.mediaInicioMin)}</td>
-          <td><span class="chip ${item.rotasInicioMaior7 > 0 ? 'danger' : 'ok'}">${item.rotasInicioMaior7}</span></td>
-          <td>${fmtMin(item.mediaFinalizacaoMin)}</td>
-          <td>${item.rotasFinalizacaoMaior7}</td>
-          <td>${item.rotasFinalizadas}</td>
-        </tr>
-      `).join('') || `<tr><td colspan="7" class="hint">Nenhum OPS encontrado com esse filtro.</td></tr>`;
-
-      resultInfo.textContent = `${opsFiltered.length} OPS exibidos · fonte: ${data.sourceName}`;
-      currentSource.textContent = data.sourceName;
-    }
-
-    function escapeHtml(value){
-      return String(value ?? '')
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#39;');
-    }
-
-    function parseDateBR(value){
-      if (!value) return null;
-      const s = String(value).trim();
-      const m = s.match(/^(\d{2})-(\d{2})-(\d{4})\s+(\d{2}):(\d{2})$/);
-      if (!m) return null;
-      const [, dd, mm, yyyy, hh, mi] = m;
-      const dt = new Date(Number(yyyy), Number(mm) - 1, Number(dd), Number(hh), Number(mi));
-      return Number.isNaN(dt.getTime()) ? null : dt;
-    }
-
-    function minutesBetween(a,b){
-      if (!a || !b) return null;
-      return (b.getTime() - a.getTime()) / 60000;
-    }
-
-    function splitOps(text){
-      const raw = String(text || '').trim();
-      const m = raw.match(/^(\[ops\d+\])\s*(.*)$/i);
-      return {
-        opsCode: m ? m[1] : '',
-        opsName: m ? m[2] : raw,
-      };
-    }
-
-    function parseCSV(text){
-      const rows = [];
-      let row = [];
-      let cell = '';
-      let inQuotes = false;
-
-      for (let i = 0; i < text.length; i++) {
-        const char = text[i];
-        const next = text[i + 1];
-
-        if (char === '"') {
-          if (inQuotes && next === '"') {
-            cell += '"';
-            i++;
-          } else {
-            inQuotes = !inQuotes;
-          }
-        } else if (char === ',' && !inQuotes) {
-          row.push(cell);
-          cell = '';
-        } else if ((char === '\n' || char === '\r') && !inQuotes) {
-          if (char === '\r' && next === '\n') i++;
-          row.push(cell);
-          if (row.some(v => String(v).length)) rows.push(row);
-          row = [];
-          cell = '';
-        } else {
-          cell += char;
-        }
-      }
-
-      if (cell.length || row.length) {
-        row.push(cell);
-        if (row.some(v => String(v).length)) rows.push(row);
-      }
-
-      return rows;
-    }
-
-    function rowsToObjects(rows){
-      if (!rows.length) return [];
-      const headers = rows[0].map(h => String(h).replace(/^\uFEFF/, '').trim());
-      return rows.slice(1).map(cols => {
-        const obj = {};
-        headers.forEach((header, idx) => obj[header] = (cols[idx] ?? '').trim());
-        return obj;
-      });
-    }
-
-    function buildDataFromObjects(objects, sourceName){
-      const routeMap = new Map();
-
-      for (const item of objects) {
-        const taskId = item['Task ID'];
-        if (!taskId) continue;
-
-        if (!routeMap.has(taskId)) {
-          routeMap.set(taskId, {
-            taskId,
-            creator: item['Creator'] || item['Operator'] || '',
-            createTime: item['Create Time'] || '',
-            assignedTime: item['Driver Assigned Time'] || '',
-            completeTime: item['Complete time'] || '',
-          });
-        }
-      }
-
-      const routes = [...routeMap.values()].map(route => {
-        const create = parseDateBR(route.createTime);
-        const assigned = parseDateBR(route.assignedTime);
-        const complete = parseDateBR(route.completeTime);
-        return {
-          ...route,
-          startMin: minutesBetween(create, assigned),
-          finishMin: minutesBetween(assigned, complete),
-          totalMin: minutesBetween(create, complete),
-        };
-      });
-
-      const opsMap = new Map();
-      for (const route of routes) {
-        const key = route.creator || 'Sem identificação';
-        if (!opsMap.has(key)) {
-          const info = splitOps(key);
-          opsMap.set(key, {
-            creator: key,
-            opsCode: info.opsCode,
-            opsName: info.opsName,
-            rotas: 0,
-            startList: [],
-            finishList: [],
-            totalList: [],
-            rotasInicioMaior7: 0,
-            rotasFinalizacaoMaior7: 0,
-            rotasFinalizadas: 0,
-          });
-        }
-
-        const acc = opsMap.get(key);
-        acc.rotas += 1;
-
-        if (route.startMin !== null && !Number.isNaN(route.startMin)) {
-          acc.startList.push(route.startMin);
-          if (route.startMin > 7) acc.rotasInicioMaior7 += 1;
-        }
-
-        if (route.finishMin !== null && !Number.isNaN(route.finishMin)) {
-          acc.finishList.push(route.finishMin);
-          acc.rotasFinalizadas += 1;
-          if (route.finishMin > 7) acc.rotasFinalizacaoMaior7 += 1;
-        }
-
-        if (route.totalMin !== null && !Number.isNaN(route.totalMin)) {
-          acc.totalList.push(route.totalMin);
-        }
-      }
-
-      const avg = arr => arr.length ? Number((arr.reduce((a,b) => a+b, 0) / arr.length).toFixed(2)) : null;
-      const ops = [...opsMap.values()].map(item => ({
-        creator: item.creator,
-        opsCode: item.opsCode,
-        opsName: item.opsName,
-        rotas: item.rotas,
-        mediaInicioMin: avg(item.startList),
-        rotasInicioMaior7: item.rotasInicioMaior7,
-        mediaFinalizacaoMin: avg(item.finishList),
-        rotasFinalizacaoMaior7: item.rotasFinalizacaoMaior7,
-        rotasFinalizadas: item.rotasFinalizadas,
-        mediaTotalMin: avg(item.totalList),
-      })).sort((a,b) => (b.mediaInicioMin ?? -1) - (a.mediaInicioMin ?? -1));
-
-      const startVals = routes.map(r => r.startMin).filter(v => v !== null && !Number.isNaN(v));
-      const finishVals = routes.map(r => r.finishMin).filter(v => v !== null && !Number.isNaN(v));
-
-      return {
-        sourceName,
-        summary: {
-          totalRotas: routes.length,
-          totalOps: ops.length,
-          mediaInicioGeralMin: avg(startVals),
-          rotasInicioMaior7: startVals.filter(v => v > 7).length,
-          rotasFinalizadas: finishVals.length,
-          mediaFinalizacaoGeralMin: avg(finishVals),
-          rotasFinalizacaoMaior7: finishVals.filter(v => v > 7).length,
-        },
-        ops,
-      };
-    }
-
-    fileInput.addEventListener('change', async (event) => {
-      const file = event.target.files?.[0];
-      if (!file) return;
-
-      const text = await file.text();
-      const rows = parseCSV(text);
-      const objects = rowsToObjects(rows);
-      currentData = buildDataFromObjects(objects, file.name);
-      render(currentData, searchInput.value);
+function renderBarChart(container, series, opts={}){
+  const width = opts.width || 760, height = opts.height || 290;
+  const left = 42, right = 10, top = 10, bottom = 44;
+  const plotW = width-left-right, plotH = height-top-bottom;
+  const maxVal = Math.max(1, ...series.flatMap(s => s.values));
+  const xCount = series[0]?.labels?.length || 0;
+  if(!xCount){ container.innerHTML = '<div class="hint">Sem dados para o gráfico.</div>'; return; }
+  const groupW = plotW / xCount;
+  const barW = Math.max(8, Math.min(24, groupW / (series.length + 1)));
+  let svg = `<svg viewBox="0 0 ${width} ${height}" width="100%" role="img" aria-label="gráfico">`;
+  for(let i=0;i<=4;i++){
+    const y = top + (plotH/4)*i;
+    const val = (maxVal - (maxVal/4)*i).toFixed(0);
+    svg += `<line x1="${left}" y1="${y}" x2="${width-right}" y2="${y}" stroke="rgba(255,255,255,.08)" />`;
+    svg += `<text x="${left-8}" y="${y+4}" text-anchor="end" fill="rgba(255,255,255,.55)" font-size="11">${val}</text>`;
+  }
+  series[0].labels.forEach((label, i) => {
+    const gx = left + groupW*i + groupW/2;
+    svg += `<text x="${gx}" y="${height-16}" text-anchor="middle" fill="rgba(255,255,255,.65)" font-size="11">${label}</text>`;
+    series.forEach((s, j) => {
+      const val = s.values[i] || 0;
+      const h = (val/maxVal) * plotH;
+      const x = left + groupW*i + ((groupW - (barW*series.length))/2) + j*barW;
+      const y = top + plotH - h;
+      svg += `<rect x="${x}" y="${y}" width="${barW-2}" height="${Math.max(0,h)}" rx="6" fill="${s.color}" opacity="0.95"><title>${label} · ${s.name}: ${val}</title></rect>`;
     });
+  });
+  svg += '</svg>';
+  container.innerHTML = svg;
+}
 
-    searchInput.addEventListener('input', () => render(currentData, searchInput.value));
+function renderHorizontalChart(container, items, metricKey, label){
+  if(!items.length){ container.innerHTML = '<div class="hint">Sem dados para o gráfico.</div>'; return; }
+  const maxVal = Math.max(1, ...items.map(x => x[metricKey] || 0));
+  container.innerHTML = items.map(item => {
+    const pct = ((item[metricKey] || 0)/maxVal)*100;
+    return `<div style="display:grid;grid-template-columns:180px 1fr 72px;gap:10px;align-items:center;margin:10px 0">
+      <div style="font-size:12px"><strong>${esc(item.opsName || item.creator)}</strong></div>
+      <div style="height:14px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,.06)"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--bad),var(--brand));border-radius:999px"></div></div>
+      <div style="font-size:12px;text-align:right">${fmtMin(item[metricKey])}</div>
+    </div>`;
+  }).join('') + `<div class="foot">Escala visual do ranking atual: <strong>${label}</strong>.</div>`;
+}
 
-    render(currentData);
-  </script>
+function render(data, filter=''){
+  currentSource.textContent = data.sourceName;
+  const summary = data.summary;
+  cards.innerHTML = [
+    cardTemplate('Total de rotas', fmtNum(summary.totalRotas), 'Rotas únicas por Task ID'),
+    cardTemplate('Total de pacotes', fmtNum(summary.totalPacotes), 'Soma de Number of assigned orders/TO'),
+    cardTemplate('OPS mapeados', fmtNum(summary.totalOps), 'Bancadas/OPS identificados no arquivo'),
+    cardTemplate('Média para iniciar', fmtMin(summary.mediaInicioGeralMin), 'Create Time → Driver Assigned Time'),
+    cardTemplate('Média para finalizar', fmtMin(summary.mediaFinalizacaoGeralMin), `${fmtNum(summary.rotasFinalizadas)} rotas com Complete time`),
+    cardTemplate('Média total da rota', fmtMin(summary.mediaTotalGeralMin), 'Create Time → Complete time')
+  ].join('');
+
+  const { filtered, ranking, label, metricKey } = getRanking(data, rankMode.value, filter);
+  rankingTitle.textContent = `Top 10 ofensores por ${label}`;
+  rankingBody.innerHTML = ranking.map((item, idx) => `
+    <tr>
+      <td><span class="rank">${idx+1}</span></td>
+      <td><div class="name">${esc(item.opsName || item.creator)}</div><div class="code">${esc(item.opsCode || '')}</div></td>
+      <td><span class="chip bad">${fmtMin(item[metricKey])}</span></td>
+      <td>${fmtNum(item.rotas)}</td>
+      <td>${fmtNum(item.pacotes)}</td>
+      <td>${fmtNum(metricKey === 'mediaInicioMin' ? item.rotasInicioMaior7 : item.rotasTotalMaior7)}</td>
+      <td>${fmtNum(item.rotasFinalizadas)}</td>
+    </tr>`).join('') || `<tr><td colspan="7" class="hint">Nenhum OPS encontrado.</td></tr>`;
+
+  opsBody.innerHTML = filtered.sort((a,b)=> (b.rotas-a.rotas) || ((b.mediaInicioMin||0)-(a.mediaInicioMin||0))).map(item => `
+    <tr>
+      <td><div class="name">${esc(item.opsName || item.creator)}</div><div class="code">${esc(item.opsCode || '')}</div></td>
+      <td>${fmtNum(item.rotas)}</td>
+      <td>${fmtNum(item.pacotes)}</td>
+      <td>${fmtMin(item.mediaInicioMin)}</td>
+      <td>${fmtMin(item.mediaFinalizacaoMin)}</td>
+      <td>${fmtMin(item.mediaTotalMin)}</td>
+      <td><span class="chip ${item.maxTotalMin ? 'warn' : 'ok'}">${fmtMin(item.maxTotalMin)}</span></td>
+    </tr>`).join('') || `<tr><td colspan="7" class="hint">Sem resultado para esse filtro.</td></tr>`;
+
+  longestBody.innerHTML = data.longestRoutes.map(item => {
+    const info = splitOps(item.creator);
+    return `<tr>
+      <td><div class="name">${esc(info.opsName || item.creator)}</div><div class="code">${esc(info.opsCode || '')}</div></td>
+      <td>${esc(item.taskId)}</td>
+      <td>${esc(item.driverName || '—')}</td>
+      <td>${fmtNum(item.packages)}</td>
+      <td>${fmtMin(item.startMin)}</td>
+      <td>${fmtMin(item.finishMin)}</td>
+      <td><span class="chip bad">${fmtMin(item.totalMin)}</span></td>
+    </tr>`;
+  }).join('') || `<tr><td colspan="7" class="hint">Nenhuma rota finalizada encontrada.</td></tr>`;
+
+  hourlyBody.innerHTML = data.hourly.map(item => `
+    <tr>
+      <td>${item.hour}</td>
+      <td><span class="chip ok">${fmtNum(item.opsAtivos)}</span></td>
+      <td>${fmtNum(item.rotas)}</td>
+      <td>${fmtNum(item.pacotes)}</td>
+      <td>${fmtMin(item.mediaInicioMin)}</td>
+    </tr>`).join('') || `<tr><td colspan="5" class="hint">Sem dados horários.</td></tr>`;
+
+  renderBarChart(hourlyChart, [
+    { name:'OPS ativos', color:'var(--blue)', labels:data.hourly.map(x=>x.hour), values:data.hourly.map(x=>x.opsAtivos) },
+    { name:'Rotas', color:'var(--brand)', labels:data.hourly.map(x=>x.hour), values:data.hourly.map(x=>x.rotas) },
+    { name:'Pacotes', color:'var(--ok)', labels:data.hourly.map(x=>x.hour), values:data.hourly.map(x=>x.pacotes) }
+  ]);
+
+  renderHorizontalChart(opsChart, ranking, metricKey, label);
+
+  resultInfo.textContent = `${filtered.length} OPS exibidos · pico de rotas: ${summary.horaPicoRotas || '—'} · pico de pacotes: ${summary.horaPicoPacotes || '—'} · pico de OPS ativos: ${summary.horaPicoOps || '—'}`;
+}
+
+fileInput.addEventListener('change', async (event) => {
+  const file = event.target.files?.[0];
+  if(!file) return;
+  const text = await file.text();
+  currentData = buildDataFromObjects(rowsToObjects(parseCSV(text)), file.name);
+  render(currentData, searchInput.value);
+});
+searchInput.addEventListener('input', () => render(currentData, searchInput.value));
+rankMode.addEventListener('change', () => render(currentData, searchInput.value));
+render(currentData);
+</script>
 </body>
 </html>
